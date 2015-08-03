@@ -2,8 +2,6 @@
 
 USING_NS_CC;
 
-#define PTMRATIO 64
-
 typedef enum {
 	POLYGON_FIXTURE,
 	POLYLINE_FIXTURE,
@@ -23,7 +21,50 @@ b2Body* TiledBodyCreator::initCollisionMap(TMXTiledMap* map, b2World* world, std
 
 	for(cocos2d::Value objectValue : collisionObjects)
 	{
-		auto fixtureShape = createFixture(objectValue.asValueMap());
+        cocos2d::ValueMap valueMap = objectValue.asValueMap();
+        if( valueMap.find("x") != valueMap.end()) {
+            float x  = valueMap["x"].asFloat() * map->getScale();
+            valueMap["x"] = x;
+        }
+        if( valueMap.find("y") != valueMap.end()){
+            float y = valueMap["y"].asFloat() * map->getScale();
+            valueMap["y"] = y;
+        }
+        if( valueMap.find("width") != valueMap.end()){
+            float width = valueMap["width"].asFloat() * map->getScale();
+            valueMap["width"] = width;
+        }
+        if( valueMap.find("height") != valueMap.end()){
+            float height  = valueMap["height"].asFloat() * map->getScale();
+            valueMap["height"] = height;
+        }
+        if( valueMap.find("points") != valueMap.end()){
+            ValueVector pointsVector = valueMap["points"].asValueVector();
+            for( int i = 0 ; i < pointsVector.size(); i++ ){
+                cocos2d::ValueMap tmp = pointsVector[i].asValueMap();
+                float tmpX = tmp["x"].asFloat() * map->getScale();
+                float tmpY = tmp["y"].asFloat() * map->getScale();
+                tmp["x"] = tmpX;
+                tmp["y"] = tmpY;
+                pointsVector[i] = tmp;
+            }
+            valueMap["points"] = pointsVector;
+        }
+        if( valueMap.find("polylinePoints") != valueMap.end()){
+            ValueVector pointsVector = valueMap["polylinePoints"].asValueVector();
+            for( int i = 0 ; i < pointsVector.size(); i++ ){
+                cocos2d::ValueMap tmp = pointsVector[i].asValueMap();
+                float tmpX = tmp["x"].asFloat() * map->getScale();
+                float tmpY = tmp["y"].asFloat() * map->getScale();
+                tmp["x"] = tmpX;
+                tmp["y"] = tmpY;
+                pointsVector[i] = tmp;
+            }
+            valueMap["polylinePoints"] = pointsVector;
+        }
+        
+        
+		auto fixtureShape = createFixture(valueMap);
 		if(fixtureShape != NULL) {
 			collisionBody->CreateFixture(&fixtureShape->fixture);
 		}

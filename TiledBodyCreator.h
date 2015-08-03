@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include <Box2D/Box2D.h>
+#define PTMRATIO 64
 
 USING_NS_CC;
 
